@@ -46,8 +46,6 @@ if __name__ == "__main__":
     )
     browser.click(download)
 
-    
-
     pause: bool = True
 
     while pause:
@@ -87,18 +85,25 @@ if __name__ == "__main__":
             log.info("Digitando First Name")
             browser.digitar(row["First Name"], elemento=primeiro_nome)
 
-            log.info("Digitando Last Name")
-            browser.digitar(row["Last Name "], elemento=sobrenome)
+            log.info("Digitando Last Name ")
+            browser.digitar(row["Last Name"], elemento=sobrenome)
 
             log.info("Digitando Company Name")
             browser.digitar(row["Company Name"], elemento=empresa)
 
-            log.info(f"Digitando Role in Company: {row["Role in Company"]}")
+            log.info(f"Digitando Role in Company: {row['Role in Company']}")
             browser.digitar(row["Role in Company"], elemento=funcao)
 
             browser.click(enviar)
             log.info("Enviado com sucesso")
         except Exception as ex:
             log.error(f"Erro no processo: {ex}")
+            email.clear()
+            telefone.clear()
+            endereco.clear()
+            primeiro_nome.clear()
+            sobrenome.clear()
+            empresa.clear()
+            funcao.clear()
     sleep(10)
     browser.driver.quit()
