@@ -1,0 +1,7 @@
+EMAIL = "//input[@ng-reflect-name='labelEmail']"
+PHONE = "//input[@ng-reflect-name='labelPhone']"
+ADDRESS = "//input[@ng-reflect-name='labelAddress']"
+LAST_NAME = "//input[@ng-reflect-name='labelLastName']"
+FIRST_NAME = "//input[@ng-reflect-name='labelFirstName']"
+COMPANY_NAME = "//input[@ng-reflect-name='labelCompanyName']"
+ROLE_IN_COMPANY = "//input[@ng-reflect-name='labelRole']"
