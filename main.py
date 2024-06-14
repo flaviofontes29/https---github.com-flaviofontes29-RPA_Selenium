@@ -6,34 +6,35 @@ import logging
 import pandas as pd
 from pathlib import Path
 
-caminho_arquivos = Path(__file__).parent
 
 
-for file_path in caminho_arquivos.glob(f"*.xlsx"):
-    try:
-        file_path.unlink()  # Deleta o arquivo
-        print(f"{file_path} deletado com sucesso")
-    except Exception as e:
-        print(f"Erro ao deletar {file_path}: {e}")
-
-for file_path in caminho_arquivos.glob(f"*.log"):
-    try:
-        file_path.unlink()  # Deleta o arquivo
-        print(f"{file_path} deletado com sucesso")
-    except Exception as e:
-        print(f"Erro ao deletar {file_path}: {e}")
-
-# Criar uma instância da classe Logger
-logger_instance = Logger()
-
-# Configurar o arquivo de log
-logger_instance.configurar_arquivo_log()
-
-# Teste para verificar se o log está funcionando
-log = logging.getLogger(__name__)
+def main():
+    caminho_arquivos = Path(__file__).parent
 
 
-if __name__ == "__main__":
+    for file_path in caminho_arquivos.glob(f"*.xlsx"):
+        try:
+            file_path.unlink()  # Deleta o arquivo
+            print(f"{file_path} deletado com sucesso")
+        except Exception as e:
+            print(f"Erro ao deletar {file_path}: {e}")
+
+    for file_path in caminho_arquivos.glob(f"*.log"):
+        try:
+            file_path.unlink()  # Deleta o arquivo
+            print(f"{file_path} deletado com sucesso")
+        except Exception as e:
+            print(f"Erro ao deletar {file_path}: {e}")
+
+    # Criar uma instância da classe Logger
+    logger_instance = Logger()
+
+    # Configurar o arquivo de log
+    logger_instance.configurar_arquivo_log()
+
+    # Teste para verificar se o log está funcionando
+    log = logging.getLogger(__name__)
+
 
     browser = Function()
 
@@ -73,22 +74,22 @@ if __name__ == "__main__":
             10, "/html/body/app-root/div[2]/app-rpa1/div/div[2]/form/input"
         )
         try:
-            log.info("Digitando E-mail")
+            log.info(f"Digitando E-mail: {row['Email']}")
             browser.digitar(row["Email"], elemento=email)
 
-            log.info("Digitando Phone Number")
+            log.info(f"Digitando Phone Number: {row['Phone Number']}")
             browser.digitar(row["Phone Number"], elemento=telefone)
 
-            log.info("Digitando Address")
+            log.info(f"Digitando Address: {row['Address']}")
             browser.digitar(row["Address"], elemento=endereco)
 
-            log.info("Digitando First Name")
+            log.info(f"Digitando First Name: {row['First Name']}")
             browser.digitar(row["First Name"], elemento=primeiro_nome)
 
-            log.info("Digitando Last Name ")
-            browser.digitar(row["Last Name"], elemento=sobrenome)
+            log.info(f"Digitando Last Name: {row['Last Name ']}")
+            browser.digitar(row["Last Name "], elemento=sobrenome)
 
-            log.info("Digitando Company Name")
+            log.info(f"Digitando Company Name: {row['Company Name']}")
             browser.digitar(row["Company Name"], elemento=empresa)
 
             log.info(f"Digitando Role in Company: {row['Role in Company']}")
@@ -96,8 +97,8 @@ if __name__ == "__main__":
 
             browser.click(enviar)
             log.info("Enviado com sucesso")
-        except Exception as ex:
-            log.error(f"Erro no processo: {ex}")
+        except KeyError as ex:
+            log.error(f"Ocorreu um erro mapeado: {ex}")
             email.clear()
             telefone.clear()
             endereco.clear()
@@ -105,5 +106,14 @@ if __name__ == "__main__":
             sobrenome.clear()
             empresa.clear()
             funcao.clear()
-    sleep(10)
+        except Exception as ex:
+            log.error(f"Ocorreu um erro não esperado: {ex}")
+            email.clear()
+            telefone.clear()
+            endereco.clear()
+            primeiro_nome.clear()
+            sobrenome.clear()
+            empresa.clear()
+            funcao.clear()
+    sleep(3)
     browser.driver.quit()
