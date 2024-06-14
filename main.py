@@ -5,13 +5,15 @@ import seletor
 import logging
 import pandas as pd
 from pathlib import Path
-
-
+from datetime import datetime
+import urllib3
 
 def main():
     caminho_arquivos = Path(__file__).parent
+    meus_downloads = Path.home() / "Downloads"
 
-
+    data_atual = datetime.now()
+    data_formatada = data_atual.strftime("%d-%m-%Y")
     for file_path in caminho_arquivos.glob(f"*.xlsx"):
         try:
             file_path.unlink()  # Deleta o arquivo
@@ -35,7 +37,7 @@ def main():
     # Teste para verificar se o log está funcionando
     log = logging.getLogger(__name__)
 
-
+    data = {"Round": [], "Status": [], "Data": []}
     browser = Function()
 
     browser.url("https://rpachallenge.com/")
@@ -60,7 +62,7 @@ def main():
         data_frame = pd.read_excel("challenge.xlsx", engine="openpyxl")
     except TimeoutError as e:
         log.error(f"Falha no download do arquivo: {e}")
-
+        return
     browser.click(start)
     for index, row in data_frame.iterrows():
         email = browser.xpath(10, seletor.EMAIL)
@@ -97,6 +99,9 @@ def main():
 
             browser.click(enviar)
             log.info("Enviado com sucesso")
+            data["Round"].append(index +1)
+            data["Status"].append("Sucesso")
+            data["Data"].append(data_formatada)
         except KeyError as ex:
             log.error(f"Ocorreu um erro mapeado: {ex}")
             email.clear()
@@ -106,6 +111,9 @@ def main():
             sobrenome.clear()
             empresa.clear()
             funcao.clear()
+            data["Round"].append(index+1)
+            data["Status"].append(f"Ocorreu um erro mapeado: {ex}")
+            data["Data"].append(data_formatada)
         except Exception as ex:
             log.error(f"Ocorreu um erro não esperado: {ex}")
             email.clear()
@@ -115,5 +123,22 @@ def main():
             sobrenome.clear()
             empresa.clear()
             funcao.clear()
+            data["Round"].append(index+1)
+            data["Status"].append(f"Ocorreu um erro mapeado: {ex}")
+            data["Data"].append(data_formatada)
+        except urllib3.exceptions.NewConnectionError as ex:
+            log.critical(f"Ocorreu um erro grave: {ex}")
     sleep(3)
     browser.driver.quit()
+
+    df = pd.DataFrame(data=data)
+    try:
+        
+        df.to_excel(
+            f"{meus_downloads}\Relatório-{data_formatada}.xlsx",
+            index=False,
+            sheet_name="Relatório",
+        )
+        log.info(f"Relatório salvo em {meus_downloads / f'Relatório_{data_formatada}.xlsx'}")
+    except EnvironmentError as ex:
+        log.error(f"Caminho não encontrado: {ex}")
